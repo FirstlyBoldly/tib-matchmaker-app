@@ -278,7 +278,7 @@ const Dashboard = ({ users, currentUser, onUserSelect, selectedUser, onBack, isP
                         </div>
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', overflowY: isExpanded ? 'auto' : 'hidden' }}>
-                            {users.map(user => {
+                            {users.slice(0, 3).map(user => {
                                 const room = getRoomAtPosition(user.position, user.floor);
                                 const locationText = `Floor ${user.floor}${room ? ` • ${room.name}` : ''}`;
 
