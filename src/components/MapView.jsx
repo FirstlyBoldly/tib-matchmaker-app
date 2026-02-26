@@ -97,27 +97,49 @@ const UserMarker = ({ user, isSelected, onClick }) => {
             <Html position={[0, 2.5, 0]} center distanceFactor={15}>
                 <div
                     style={{
-                        width: '40px',
-                        height: '40px',
-                        borderRadius: '12px',
-                        overflow: 'hidden',
-                        border: '2px solid white',
-                        boxShadow: '0 4px 6px rgba(0,0,0,0.3)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        transform: 'translate3d(-50%, -50%, 0)', // Centering
                         cursor: 'pointer',
-                        transition: 'transform 0.2s',
-                        pointerEvents: 'auto', // Ensure it captures clicks
+                        pointerEvents: 'auto',
                     }}
-                    className="profile-marker"
                     onClick={(e) => {
-                        e.stopPropagation(); // Prevent bubbling if needed
+                        e.stopPropagation();
                         onClick(e);
                     }}
                 >
-                    <img
-                        src={user.imageUrl}
-                        alt={user.name}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    />
+                    {/* Avatar Box */}
+                    <div style={{
+                        width: '60px',
+                        height: '60px',
+                        borderRadius: '16px',
+                        overflow: 'hidden',
+                        border: '3px solid white',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+                        background: '#fff',
+                        marginBottom: '4px'
+                    }}>
+                        <img
+                            src={user.imageUrl}
+                            alt={user.name}
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                    </div>
+
+                    {/* Name Badge */}
+                    <div style={{
+                        background: 'rgba(0,0,0,0.7)',
+                        color: 'white',
+                        padding: '4px 8px',
+                        borderRadius: '12px',
+                        fontSize: '12px',
+                        fontWeight: 'bold',
+                        whiteSpace: 'nowrap',
+                        backdropFilter: 'blur(4px)'
+                    }}>
+                        {user.name}
+                    </div>
                 </div>
             </Html>
 

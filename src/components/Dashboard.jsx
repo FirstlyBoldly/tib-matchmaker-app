@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Search, User, Navigation, Zap, Bell, Settings, Circle, Flag, QrCode } from 'lucide-react';
 import { getRoomAtPosition } from '../data/mapData';
 
-const Dashboard = ({ users, currentUser, onUserSelect, selectedUser, onBack }) => {
+const Dashboard = ({ users, currentUser, onUserSelect, selectedUser, onBack, isPublic, onTogglePublic }) => {
     const [isExpanded, setIsExpanded] = useState(true);
+    const [notification, setNotification] = useState(null);
 
     // Auto-expand when a user is selected
     React.useEffect(() => {
@@ -13,23 +14,37 @@ const Dashboard = ({ users, currentUser, onUserSelect, selectedUser, onBack }) =
         }
     }, [selectedUser]);
 
+    // Dummy Notification System
+    React.useEffect(() => {
+        if (!isPublic) return;
+
+        const interval = setInterval(() => {
+            const randomUser = users[Math.floor(Math.random() * users.length)];
+            setNotification(`${randomUser.name} is nearby! ${randomUser.matchReason}`);
+            setTimeout(() => setNotification(null), 5000);
+        }, 15000);
+
+        return () => clearInterval(interval);
+    }, [isPublic, users]);
+
     return (
         <div className="full-screen" style={{ zIndex: 5, pointerEvents: 'none' }}>
 
-            {/* Top Banner (TiB Logo) */}
             <div style={{
                 position: 'absolute',
                 top: 0,
                 left: 0,
                 right: 0,
-                height: '60px',
+                height: '70px',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
+                justifyContent: 'space-between',
+                padding: '0 20px',
                 background: 'linear-gradient(to bottom, rgba(255,255,255,0.95), rgba(255,255,255,0))',
-                pointerEvents: 'none', // Allow clicks through if needed, but text is visible
+                pointerEvents: 'none',
                 zIndex: 10
             }}>
+                <div style={{ width: '80px' }}></div> {/* Spacer */}
                 <h1 style={{
                     fontSize: '24px',
                     fontWeight: '900',
@@ -38,7 +53,60 @@ const Dashboard = ({ users, currentUser, onUserSelect, selectedUser, onBack }) =
                 }}>
                     TiB
                 </h1>
+                <div style={{ pointerEvents: 'auto' }}>
+                    <button
+                        onClick={onTogglePublic}
+                        style={{
+                            background: isPublic ? 'black' : '#eee',
+                            color: isPublic ? 'white' : '#666',
+                            border: 'none',
+                            padding: '6px 12px',
+                            borderRadius: '20px',
+                            fontSize: '12px',
+                            fontWeight: 'bold',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            cursor: 'pointer',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                        }}
+                    >
+                        <Circle size={10} fill={isPublic ? '#10B981' : '#ccc'} stroke="none" />
+                        {isPublic ? 'Public' : 'Private'}
+                    </button>
+                </div>
             </div>
+
+            {/* Notification Toast */}
+            <AnimatePresence>
+                {notification && (
+                    <motion.div
+                        initial={{ y: -100, opacity: 0 }}
+                        animate={{ y: 80, opacity: 1 }}
+                        exit={{ y: -100, opacity: 0 }}
+                        style={{
+                            position: 'absolute',
+                            left: '20px',
+                            right: '20px',
+                            background: 'black',
+                            color: 'white',
+                            padding: '16px',
+                            borderRadius: '16px',
+                            zIndex: 100,
+                            boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
+                            pointerEvents: 'auto'
+                        }}
+                    >
+                        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                            <Zap size={20} color="var(--color-secondary)" />
+                            <div>
+                                <p style={{ fontSize: '14px', fontWeight: 'bold' }}>Someone interesting nearby!</p>
+                                <p style={{ fontSize: '12px', opacity: 0.8 }}>{notification}</p>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Bottom Navbar */}
             <div style={{
@@ -151,6 +219,25 @@ const Dashboard = ({ users, currentUser, onUserSelect, selectedUser, onBack }) =
                         </div>
 
                         <div style={{ height: '1px', background: 'rgba(0,0,0,0.1)', margin: '0 0 24px' }}></div>
+
+                        {/* AI Match Reason */}
+                        <div style={{
+                            background: 'white',
+                            padding: '20px',
+                            borderRadius: '24px',
+                            marginBottom: '24px',
+                            border: '1px solid #f0f0f0',
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.03)'
+                        }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                                <Zap size={18} fill="black" />
+                                <h3 style={{ fontSize: '16px', fontWeight: '900' }}>AI Matchmaker</h3>
+                            </div>
+                            <p style={{ fontSize: '14px', color: '#444', lineHeight: '1.6' }}>
+                                <span style={{ fontWeight: 'bold', color: 'black' }}>Why this connection?</span><br />
+                                {selectedUser.matchReason}
+                            </p>
+                        </div>
 
                         {/* Navigation Info */}
                         <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>

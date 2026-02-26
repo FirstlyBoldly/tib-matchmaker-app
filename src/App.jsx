@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import ProfileReader from './components/ProfileReader';
 import CheckInScreen from './components/CheckInScreen';
 import Dashboard from './components/Dashboard';
 import MapView from './components/MapView';
 import { USERS } from './data/users';
 
 function App() {
-  const [view, setView] = useState('checkin'); // checkin, dashboard, navigation
+  const [view, setView] = useState('checkin'); // checkin, profile_reader, dashboard, navigation
   const [selectedUser, setSelectedUser] = useState(null);
+  const [isPublic, setIsPublic] = useState(true);
 
   // Mock current user state - can be updated to simulate movement
   const [currentUser, setCurrentUser] = useState({
@@ -18,6 +20,10 @@ function App() {
   });
 
   const handleCheckInComplete = () => {
+    setView('profile_reader');
+  };
+
+  const handleProfileComplete = () => {
     setView('dashboard');
   };
 
@@ -47,6 +53,10 @@ function App() {
 
       {/* UI Layers */}
       <AnimatePresence>
+        {view === 'profile_reader' && (
+          <ProfileReader key="profile" onComplete={handleProfileComplete} />
+        )}
+
         {view === 'checkin' && (
           <CheckInScreen key="checkin" onComplete={handleCheckInComplete} />
         )}
@@ -57,6 +67,8 @@ function App() {
             users={USERS}
             currentUser={currentUser}
             selectedUser={selectedUser}
+            isPublic={isPublic}
+            onTogglePublic={() => setIsPublic(!isPublic)}
             onUserSelect={handleUserSelect}
             onBack={handleBackToDashboard}
           />
