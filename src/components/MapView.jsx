@@ -111,14 +111,14 @@ const UserMarker = ({ user, isSelected, onClick }) => {
                 >
                     {/* Avatar Box */}
                     <div style={{
-                        width: '60px',
-                        height: '60px',
-                        borderRadius: '16px',
+                        width: '100px',
+                        height: '100px',
+                        borderRadius: '24px',
                         overflow: 'hidden',
-                        border: '3px solid white',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+                        border: '4px solid white',
+                        boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
                         background: '#fff',
-                        marginBottom: '4px'
+                        marginBottom: '8px'
                     }}>
                         <img
                             src={user.imageUrl}
@@ -341,14 +341,13 @@ const Scene = ({ mode, users, currentUser, selectedUser, onUserSelect }) => {
             </group>
 
             {/* Escalators */}
-            {/* Escalators */}
             {/* F1->F2 connections (Visible on F1, always show label to indicate upward path) */}
             <group visible={maxVisibleFloor >= 1}>
-                <Escalator data={ESCALATORS[0]} showLabel={true} />
+                <Escalator data={ESCALATORS[0]} showLabel={maxVisibleFloor >= 1} />
             </group>
             {/* F2->F3 connection (Visible on F2, always show label) */}
             <group visible={maxVisibleFloor >= 2}>
-                <Escalator data={ESCALATORS[1]} showLabel={true} />
+                <Escalator data={ESCALATORS[1]} showLabel={maxVisibleFloor >= 2} />
             </group>
 
             {/* You - Enhanced Marker */}
